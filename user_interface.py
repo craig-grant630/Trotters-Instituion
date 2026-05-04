@@ -3,6 +3,7 @@ from tkinter import ttk
 
 
 # https://www.pythontutorial.net/tkinter/ttk-style/
+# https://tkdocs.com/tutorial/widgets.html
 # Colours, fonts for UI
 #====================================================================================================
 BG_COLOUR = "#1a1a2e"
@@ -19,6 +20,7 @@ ACCENT = "#e94560"
 FONT_BODY = ("Helvetica", 11)
 FONT_HEADER = ("Helvetica", 20, "bold")
 FONT_SMALL = ("Helvetica", 9)
+FONT_BUTTON= ("Helvetica", 11, "bold")
 #=================================================================================================================
 #Stlyed Widgets
 
@@ -76,27 +78,16 @@ class LoginFrame(tk.Frame):
                      fg=FG_COLOUR2, bg=BG_COLOUR2).pack(pady=(0,20))
         separator(c).pack(fill="x", pady=8)
 
-
+        # Add a Notebook Widget from ttk and style
         nb = ttk.Notebook(c)
         nb.pack(fill="both", expand=True)
 
         style = ttk.Style()
         style.theme_use('clam')
-
-        style.configure("TNotebook",
-                        background=BG_COLOUR2,
-                        borderwidth=0,
-                        lightcolor=BG_COLOUR2,
-                        darkcolor=BG_COLOUR2,
-                        bordercolor=BG_COLOUR2)
-
-        style.configure("TNotebook.Tab",
-                        background=BG_COLOUR,
-                        foreground=FG_COLOUR,
-                        padding=[15, 8],
-                        font=FONT_BODY,
-                        borderwidth=0,
-                        lightcolor=BG_COLOUR,
+        style.configure("TNotebook", background=BG_COLOUR2,borderwidth=0,
+                        lightcolor=BG_COLOUR2, darkcolor=BG_COLOUR2, bordercolor=BG_COLOUR2)
+        style.configure("TNotebook.Tab", background=BG_COLOUR, foreground=FG_COLOUR,
+                        padding=[18, 10], font=FONT_BODY, borderwidth=0, lightcolor=BG_COLOUR,
                         bordercolor=BG_COLOUR2)
 
         style.map("TNotebook.Tab",
@@ -104,11 +95,33 @@ class LoginFrame(tk.Frame):
                   lightcolor=[("selected", BG_COLOUR)],
                   bordercolor=[("selected", BG_COLOUR2)])
 
-        login_tab = tk.Frame(nb, background=BG_COLOUR2, padx=16, pady=16, highlightthickness=0)
-        reg_tab = tk.Frame(nb, background=BG_COLOUR2, padx=16, pady=16, highlightthickness=0)
+        login_tab = tk.Frame(nb, background=BG_COLOUR2, padx=15, pady=15)
+        register_tab = tk.Frame(nb, background=BG_COLOUR2, padx=15, pady=15, highlightthickness=0)
 
+        # Assign frame for each tab
         nb.add(login_tab, text="Login")
-        nb.add(reg_tab, text="Register")
+        nb.add(register_tab, text="Register")
+
+        self.login_tab_form(login_tab)
+
+    def login_tab_form(self, parent):
+        row = tk.Frame(parent, bg=BG_COLOUR2)
+        row.pack(pady=6)
+        styled_label(row, "Student ID", bg=BG_COLOUR2).grid(row=1, column=0, sticky="e", padx=8)
+        self.login_id = tk.Entry(row, bg=BG_COLOUR3,fg=FG_COLOUR, relief="flat", font=FONT_BODY, highlightcolor=ACCENT)
+        self.login_id.grid(row=1, column=1, sticky="e", padx=8)
+
+        row2 = tk.Frame(parent, bg=BG_COLOUR2)
+        row2.pack(pady=6)
+        styled_label(row2, "Password", bg=BG_COLOUR2).grid(row=2, column=0, sticky="e", padx=8)
+        self.login_pwd = tk.Entry(row2, bg=BG_COLOUR3,fg=FG_COLOUR, relief="flat", font=FONT_BODY, highlightcolor=ACCENT)
+        self.login_pwd.grid(row=2, column=1, sticky="e", padx=8)
+
+        tk.Button(parent, text="Login", bg=ACCENT, fg="white", font=FONT_BUTTON, relief="raised", borderwidth=0).pack(pady=10)
+
+    def register_tab_form(self,parent):
+        row = tk.Frame(parent, bg=BG_COLOUR2)
+        row.pack(pady=6)
 
 
 if __name__=="__main__":
