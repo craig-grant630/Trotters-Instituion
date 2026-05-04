@@ -17,10 +17,10 @@ FG_COLOUR2 = "#a0a0b0"
 
 ACCENT = "#e94560"
 
-FONT_BODY = ("Helvetica", 11)
+FONT_BODY = ("Helvetica", 12)
 FONT_HEADER = ("Helvetica", 20, "bold")
-FONT_SMALL = ("Helvetica", 9)
-FONT_BUTTON= ("Helvetica", 11, "bold")
+FONT_SMALL = ("Helvetica", 10)
+FONT_BUTTON= ("Helvetica", 12, "bold")
 #=================================================================================================================
 #Stlyed Widgets
 
@@ -71,7 +71,7 @@ class LoginFrame(tk.Frame):
         outer.place(relx=0.5, rely=0.5, anchor="center")
 
         c = card(outer, padx=40, pady=36, bg=BG_COLOUR2)
-        c.pack()
+        c.pack(fill="both", expand=True)
 
         styled_label(c, "Welcome to TiT Study Buddy", font=FONT_HEADER, fg=ACCENT, bg=BG_COLOUR2).pack(pady=(0,4))
         styled_label(c, "Trotters Independent Tuition - Peckham, South East London", font=FONT_SMALL,
@@ -80,44 +80,48 @@ class LoginFrame(tk.Frame):
 
         # Add a Notebook Widget from ttk and style
         nb = ttk.Notebook(c)
-        nb.pack(fill="both", expand=True)
+        nb.pack(fill="both", expand=True, padx=10, anchor="n")
 
         style = ttk.Style()
         style.theme_use('clam')
         style.configure("TNotebook", background=BG_COLOUR2,borderwidth=0,
                         lightcolor=BG_COLOUR2, darkcolor=BG_COLOUR2, bordercolor=BG_COLOUR2)
         style.configure("TNotebook.Tab", background=BG_COLOUR, foreground=FG_COLOUR,
-                        padding=[18, 10], font=FONT_BODY, borderwidth=0, lightcolor=BG_COLOUR,
-                        bordercolor=BG_COLOUR2)
+                        padding=[40, 10], font=FONT_BODY, borderwidth=0, lightcolor=BG_COLOUR,
+                        bordercolor=BG_COLOUR2, width=20)
 
         style.map("TNotebook.Tab",
-                  background=[("selected", BG_COLOUR2), ("active", BG_COLOUR)],
-                  lightcolor=[("selected", BG_COLOUR)],
-                  bordercolor=[("selected", BG_COLOUR2)])
+                  background=[("selected", ACCENT)],
+                  lightcolor=[("selected", ACCENT)],
+                  darkcolor=[("selected", ACCENT)],
+                  bordercolor=[("selected", ACCENT)])
 
         login_tab = tk.Frame(nb, background=BG_COLOUR2, padx=15, pady=15)
-        register_tab = tk.Frame(nb, background=BG_COLOUR2, padx=15, pady=15, highlightthickness=0)
+        register_tab = tk.Frame(nb, background=BG_COLOUR2, padx=15, pady=15)
 
         # Assign frame for each tab
         nb.add(login_tab, text="Login")
         nb.add(register_tab, text="Register")
 
         self.login_tab_form(login_tab)
+        self.register_tab_form(register_tab)
 
     def login_tab_form(self, parent):
         row = tk.Frame(parent, bg=BG_COLOUR2)
         row.pack(pady=6)
-        styled_label(row, "Student ID", bg=BG_COLOUR2).grid(row=1, column=0, sticky="e", padx=8)
-        self.login_id = tk.Entry(row, bg=BG_COLOUR3,fg=FG_COLOUR, relief="flat", font=FONT_BODY, highlightcolor=ACCENT)
-        self.login_id.grid(row=1, column=1, sticky="e", padx=8)
+        styled_label(row, "Student ID (10 digits)", bg=BG_COLOUR2, font=FONT_BODY,
+                     fg=FG_COLOUR2).grid(row=0, column=0, sticky="w", padx=8)
+        self.login_id = tk.Entry(row, bg=BG_COLOUR3,fg="white", relief="flat", font=FONT_BODY, width=40)
+        self.login_id.grid(row=1, column=0, sticky="w", padx=8)
 
         row2 = tk.Frame(parent, bg=BG_COLOUR2)
         row2.pack(pady=6)
-        styled_label(row2, "Password", bg=BG_COLOUR2).grid(row=2, column=0, sticky="e", padx=8)
-        self.login_pwd = tk.Entry(row2, bg=BG_COLOUR3,fg=FG_COLOUR, relief="flat", font=FONT_BODY, highlightcolor=ACCENT)
-        self.login_pwd.grid(row=2, column=1, sticky="e", padx=8)
+        styled_label(row2, "Password", bg=BG_COLOUR2,fg=FG_COLOUR2,
+                     font=FONT_BODY).grid(row=0, column=0, sticky="w", padx=8)
+        self.login_pwd = tk.Entry(row2, bg=BG_COLOUR3,fg="white", relief="flat", font=FONT_BODY, width=40)
+        self.login_pwd.grid(row=1, column=0, sticky="w", padx=8)
 
-        tk.Button(parent, text="Login", bg=ACCENT, fg="white", font=FONT_BUTTON, relief="raised", borderwidth=0).pack(pady=10)
+        tk.Button(parent, text="Login >>", bg=BG_COLOUR2, fg="white", font=FONT_BUTTON, relief="flat",borderwidth=1).pack(pady=10, padx=10)
 
     def register_tab_form(self,parent):
         row = tk.Frame(parent, bg=BG_COLOUR2)
