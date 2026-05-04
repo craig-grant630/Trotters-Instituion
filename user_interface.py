@@ -118,14 +118,31 @@ class LoginFrame(tk.Frame):
         row2.pack(pady=6)
         styled_label(row2, "Password", bg=BG_COLOUR2,fg=FG_COLOUR2,
                      font=FONT_BODY).grid(row=0, column=0, sticky="w", padx=8)
-        self.login_pwd = tk.Entry(row2, bg=BG_COLOUR3,fg="white", relief="flat", font=FONT_BODY, width=40)
+        self.login_pwd = tk.Entry(row2, bg=BG_COLOUR3,fg="white", relief="flat", font=FONT_BODY, width=40, show="*")
         self.login_pwd.grid(row=1, column=0, sticky="w", padx=8)
 
-        tk.Button(parent, text="Login >>", bg=BG_COLOUR2, fg="white", font=FONT_BUTTON, relief="flat",borderwidth=1).pack(pady=10, padx=10)
+        tk.Button(parent, text="Login >>", bg=BG_COLOUR2, fg="white", font=FONT_BUTTON, relief="flat",borderwidth=1).pack(pady=14, padx=10)
 
     def register_tab_form(self,parent):
-        row = tk.Frame(parent, bg=BG_COLOUR2)
-        row.pack(pady=6)
+
+        fields = [
+            ("Student ID (10 digits)", False),
+            ("Full Name", False),
+            ("Password", True),
+            ("Confirm Password", True)
+        ]
+
+        for label, show in fields:
+            row = tk.Frame(parent, bg=BG_COLOUR2)
+            row.pack(pady=6)
+            styled_label(row, label, bg=BG_COLOUR2, font=FONT_BODY,
+                         fg=FG_COLOUR2).grid(row=0, column=0, sticky="w", padx=8)
+            if show:
+                entry= tk.Entry(row, bg=BG_COLOUR3,fg="white", relief="flat", font=FONT_BODY, width=40, show="*")
+            else:
+                entry = tk.Entry(row, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=40)
+
+            entry.grid(row=1, column=0, sticky="w", padx=8)
 
 
 if __name__=="__main__":
