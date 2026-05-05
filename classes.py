@@ -29,7 +29,7 @@ class Campus:
     def to_dict(self):
         return self.__dict__
 
-    # Use class method in order to create new students from a dictionary
+    # Use class method in order to create new campus from a dictionary
     @classmethod
     def from_dict(cls, data):
         return cls(data['campus_code'], data['name'])
@@ -37,3 +37,19 @@ class Campus:
     def __repr__(self):
         return f"Campus ({self.campus_code}, {self.name})"
 
+class Module:
+    def __init__(self, module_code, name, year):
+        self.module_code = module_code.upper()
+        self.name = name
+        self.year = year
+
+    def to_dict(self):
+        return self.__dict__
+
+    # Use class method in order to create new module from a dictionary
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data['module_code'], data['name'], data['year'])
+
+    def __repr__(self):
+        return f"Module ({self.module_code}, {self.name}, year = {self.year})"
