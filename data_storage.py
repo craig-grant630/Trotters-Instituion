@@ -1,6 +1,6 @@
 import os
 import json
-from classes import Campus
+from classes import Campus, Module, Programme
 
 class FileHandler:
 
@@ -39,19 +39,36 @@ class FileHandler:
     def save_campuses(self, campuses):
         result = []
         for c in campuses.values():
-            # Use method from Campus class to change into a dictionary
+            # Use method from Campus class to change into a dictionary and append to the list for storage
             campus_dict = c.to_dict()
             result.append(campus_dict)
         return self.write_file(FileHandler.CAMPUS_FILE, result)
 
 #=======================================================================================================================
+    # Programme Save and write to programme JSON file
+    def programme_save(self, programmes):
+        result = []
+        for p in programmes.values():
+            # Use method from programmes class to change into a dictionary
+            programmes_dict = p.to_dict()
+            result.append(programmes_dict)
+        return self.write_file(FileHandler.PROGRAMMES_FILE, result)
 
+#=======================================================================================================================
+    # Check if required data and starting data is required methods
     def required_campus_data_needed(self):
         result = False
         if not os.path.exists(self.path(FileHandler.CAMPUS_FILE)) or len(self.read_file(FileHandler.CAMPUS_FILE)) <= 0:
             result = True
         return result
 
+    def required_programme_data_needed(self):
+        result = False
+        if not os.path.exists(self.path(FileHandler.PROGRAMMES_FILE)) or len(self.read_file(FileHandler.PROGRAMMES_FILE)) <= 0:
+            result = True
+        return result
+#========================================================================================================================
+    #Sample Data implemented methods - Required Data (Programmes and Campuses), Testing Data (Students)
     def set_required_campus_data(self):
 
         campuses = {"PCK": Campus("PCK", "Peckham"),
@@ -59,7 +76,28 @@ class FileHandler:
                     "PAR": Campus("PAR", "Paris")}
 
         self.save_campuses(campuses)
-        pass
+
+    def set_required_programme_data(self):
+
+        # campus codes for programmes
+        all_campuses = ["PCK", "NYC", "PAR"]
+        uk_campuses = ["PCK"]
+
+        # Modules for Programmes
+        # bent modules - BA Entrepreneurship
+        bent_modules = [Module("BENT11", "Introduction to Entrepreneurship", 1),
+                        Module("BENT12", "Planning for Business", 1),
+                        Module("BENT13", "Financial Literacy", 1),
+                        Module("BENT21", "Market Research", 2),
+                        Module("BENT22", "Design Thinking", 2),
+                        Module("BAENT23", "Business Models", 2),
+                        Module("BENT31", "Entrepreneurship Project", 3)]
+
+        programmes = {
+            "BAENT": Programme("BAENT","BA Entrepreneurship", all_campuses, bent_modules)
+        }
+
+        self.programme_save(programmes)
 
 
 

@@ -7,3 +7,6 @@ class StudyBuddyApp:
         if store.required_campus_data_needed():
             # give required data (campuses)
             store.set_required_campus_data()
+        if store.required_programme_data_needed():
+            # give required data (programmes)
+            store.set_required_programme_data()
