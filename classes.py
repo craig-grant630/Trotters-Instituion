@@ -53,3 +53,42 @@ class Module:
 
     def __repr__(self):
         return f"Module ({self.module_code}, {self.name}, year = {self.year})"
+
+class Programme:
+    def __init__(self, programme_code, name, campus_codes, modules=None):
+        self.programme_code = programme_code.upper()
+        self.name = name
+        self.campus_codes = []
+        # change all campus codes to uppercase
+        for code in campus_codes:
+            self.campus_codes.append(code.upper())
+        if modules is not None:
+            self.modules = modules
+        else:
+            self.modules = []
+
+    def to_dict(self):
+            return {
+                "programme_code": self.programme_code,
+                "name": self.name,
+                "campus_codes": self.campus_codes,
+                "modules": [m.to_dict() for m in self.modules],
+            }
+
+    @classmethod
+    def from_dict(cls, data):
+        # Turn modules from the data dictionary in the modules key into a list object
+        modules = []
+        for m in data.get("modules", []):
+            m = Module.from_dict(m)
+            modules.append(m)
+
+        return cls(
+            programme_code = data["programme_code"],
+            name=data["name"],
+            campus_codes = data["campus_codes"],
+            modules = modules,
+        )
+
+    def __repr__(self):
+        return f"Programme ({self.programme_code}, {self.name})"
