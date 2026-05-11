@@ -1,4 +1,5 @@
 import tkinter as tk
+from application import StudyBuddyApp
 
 
 # https://www.pythontutorial.net/tkinter/ttk-style/
@@ -40,6 +41,8 @@ def separator(parent, bg=BORDER):
 class StudyBuddyUI:
 
     def __init__(self):
+        self.app = StudyBuddyApp()
+
         self.root = tk.Tk()
         self.root.title("TiT Study Buddy")
         self.root.geometry("600x700")
