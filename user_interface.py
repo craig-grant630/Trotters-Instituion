@@ -1,10 +1,13 @@
 import tkinter as tk
+from tkinter import ttk
 from application import StudyBuddyApp
 
 
 # https://www.pythontutorial.net/tkinter/ttk-style/
 # https://tkdocs.com/tutorial/widgets.html
 #https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry.html
+#https://ttkbootstrap.readthedocs.io/en/version-0.5/widgets/combobox.html
+# https://tkdocs.com/tutorial/customstyles.html
 # Colours, fonts for UI
 #====================================================================================================
 BG_COLOUR = "#1a1a2e"
@@ -12,7 +15,7 @@ BG_COLOUR2 = "#16213e"
 BG_COLOUR3 = "#0f3460"
 
 BORDER = "#0f3460"
-
+ENTRY_BG="#0d2137"
 FG_COLOUR = "#eaeaea"
 FG_COLOUR2 = "#a0a0b0"
 
@@ -34,6 +37,25 @@ def styled_label(parent, text, font=FONT_BODY, fg=FG_COLOUR, bg=BG_COLOUR2, **kw
     return tk.Label(parent, text=text, font=font,
                     fg=fg, bg=bg, **kwargs)
 
+def styled_combobox(parent, options, width, **kwargs):
+
+    parent.option_add("*TCombobox*Listbox.background", BG_COLOUR3)
+    parent.option_add('*TCombobox*Listbox.foreground', 'white')
+    parent.option_add('*TCombobox*Listbox.selectBackground', ACCENT)
+    parent.option_add('*TCombobox*Listbox.font', FONT_BODY)
+
+    style = ttk.Style()
+    style.theme_use("clam")
+
+    style.configure("Dark.TCombobox", background=BG_COLOUR3, font=FONT_BODY,
+                    fieldbackground=ENTRY_BG, foreground=FG_COLOUR,arrowcolor=FG_COLOUR,
+                    bordercolor=BORDER, lightcolor=BORDER, darkcolor=BORDER,padding=(4, 4, 4, 4))
+    style.map("Dark.TCombobox", fieldbackground=[("readonly",BG_COLOUR3), ("focus", BG_COLOUR3), ("pressed",BG_COLOUR3)], foreground=[("readonly",FG_COLOUR)],
+              selectbackground=[("readonly",BG_COLOUR3), ("pressed",BG_COLOUR3)], selectforeground=[("readonly","white")])
+
+    combobox = ttk.Combobox(parent, state="readonly", values=options, width=width, style="Dark.TCombobox", font=FONT_BODY, **kwargs)
+    return combobox
+
 def separator(parent, bg=BORDER):
     return tk.Frame(parent, bg=bg, height=1)
 #============================================================================================================
@@ -45,7 +67,7 @@ class StudyBuddyUI:
 
         self.root = tk.Tk()
         self.root.title("TiT Study Buddy")
-        self.root.geometry("600x700")
+        self.root.geometry("700x700")
         self.root.configure(bg=BG_COLOUR)
         self.root.resizable(width=True, height=True)
 
@@ -96,7 +118,7 @@ class LoginFrame(tk.Frame):
         WelcomeHeader(outer, ui)
 
         row = tk.Frame(outer, bg=BG_COLOUR2)
-        row.pack()
+        row.pack(pady=10)
         login_frame_btn = tk.Button(row, text="Login", bg=ACCENT, fg="white", font=FONT_BUTTON, relief="flat",
                                     borderwidth=1, width=20, command=ui.show_login)
         login_frame_btn.grid(row=0, column=0)
@@ -106,7 +128,7 @@ class LoginFrame(tk.Frame):
         register_frame_btn.grid(row=0, column=1)
 
         row2 = tk.Frame(outer, bg=BG_COLOUR2)
-        row2.pack(pady=10)
+        row2.pack(pady=5)
 
         styled_label(row2, "Student ID (10 digits)", bg=BG_COLOUR2, font=FONT_BODY,
                      fg=FG_COLOUR2).grid(row=0, column=0, sticky="w", padx=8, pady=8)
@@ -129,13 +151,13 @@ class RegisterFrame(tk.Frame):
         self.pack(fill="both", expand=True)
         self.ui = ui
 
-        outer = tk.Frame(self, bg=BG_COLOUR2, padx=40, pady=36)
+        outer = tk.Frame(self, bg=BG_COLOUR2, padx=40, pady=20)
         outer.place(relx=0.5, rely=0.5, anchor="center")
 
         WelcomeHeader(outer, ui)
 
         row = tk.Frame(outer, bg=BG_COLOUR2)
-        row.pack()
+        row.pack(pady=10)
         login_frame_btn = tk.Button(row, text="Login", bg=BG_COLOUR, fg="white", font=FONT_BUTTON, relief="flat",
                                     borderwidth=1, width=20, command=ui.show_login)
         login_frame_btn.grid(row=0, column=0)
@@ -152,18 +174,25 @@ class RegisterFrame(tk.Frame):
 
         for label, show in fields:
             row2 = tk.Frame(outer, bg=BG_COLOUR2)
-            row2.pack()
+            row2.pack(fill="x")
+            row2.grid_columnconfigure(0, minsize=180, uniform="reg_col")
             styled_label(row2, label, bg=BG_COLOUR2, font=FONT_BODY,
-                         fg=FG_COLOUR2).grid(row=0, column=0, sticky="w", padx=8, pady=10)
+                         fg=FG_COLOUR2).grid(row=0, column=0, sticky="e", padx=8, pady=5)
             if show:
-                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=40, show="*",
+                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=30, show="*",
                                  highlightcolor=ACCENT, highlightthickness=1)
             else:
-                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=40,
+                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=30,
                                  highlightcolor=ACCENT, highlightthickness=1)
 
-            entry.grid(row=1, column=0, sticky="w", padx=8)
+            entry.grid(row=0, column=1, sticky="w", padx=8)
 
+        row2 = tk.Frame(outer, bg=BG_COLOUR2)
+        row2.pack(fill="x", pady=5)
+        styled_label(row2, "Year of Study:", bg=BG_COLOUR2, font=FONT_BODY,
+                                 fg=FG_COLOUR2).grid(row=0, column=0, sticky="w", padx=5)
+        yos = styled_combobox(row2, ["  1","  2","  3"], 3)
+        yos.grid(row=0, column=1, sticky="w", padx=5, pady=5)
 
 
 
