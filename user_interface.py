@@ -2,12 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 from application import StudyBuddyApp
 
-
+# Styling references
 # https://www.pythontutorial.net/tkinter/ttk-style/
 # https://tkdocs.com/tutorial/widgets.html
-#https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry.html
-#https://ttkbootstrap.readthedocs.io/en/version-0.5/widgets/combobox.html
+# https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/entry.html
+# https://ttkbootstrap.readthedocs.io/en/version-0.5/widgets/combobox.html
 # https://tkdocs.com/tutorial/customstyles.html
+# https://stackoverflow.com/questions/68883001/how-to-make-tkinter-combobox-dark-themed
 # Colours, fonts for UI
 #====================================================================================================
 BG_COLOUR = "#1a1a2e"
@@ -48,8 +49,8 @@ def styled_combobox(parent, options, width, **kwargs):
     style.theme_use("clam")
 
     style.configure("Dark.TCombobox", background=BG_COLOUR3, font=FONT_BODY,
-                    fieldbackground=ENTRY_BG, foreground=FG_COLOUR,arrowcolor=FG_COLOUR,
-                    bordercolor=BORDER, lightcolor=BORDER, darkcolor=BORDER,padding=(4, 4, 4, 4))
+                    fieldbackground=ENTRY_BG, foreground=FG_COLOUR,arrowcolor=ACCENT,
+                    bordercolor=BORDER, lightcolor="white", darkcolor="white")
     style.map("Dark.TCombobox", fieldbackground=[("readonly",BG_COLOUR3), ("focus", BG_COLOUR3), ("pressed",BG_COLOUR3)], foreground=[("readonly",FG_COLOUR)],
               selectbackground=[("readonly",BG_COLOUR3), ("pressed",BG_COLOUR3)], selectforeground=[("readonly","white")])
 
@@ -179,22 +180,42 @@ class RegisterFrame(tk.Frame):
             styled_label(row2, label, bg=BG_COLOUR2, font=FONT_BODY,
                          fg=FG_COLOUR2).grid(row=0, column=0, sticky="e", padx=8, pady=5)
             if show:
-                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=30, show="*",
+                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=27, show="*",
                                  highlightcolor=ACCENT, highlightthickness=1)
             else:
-                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=30,
+                entry = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=27,
                                  highlightcolor=ACCENT, highlightthickness=1)
 
             entry.grid(row=0, column=1, sticky="w", padx=8)
-
+        separator(outer).pack(fill="x", pady=10)
         row2 = tk.Frame(outer, bg=BG_COLOUR2)
-        row2.pack(fill="x", pady=5)
+        row2.pack(fill="x")
+        row2.grid_columnconfigure(0, minsize=180, uniform="reg_col")
+
         styled_label(row2, "Year of Study:", bg=BG_COLOUR2, font=FONT_BODY,
-                                 fg=FG_COLOUR2).grid(row=0, column=0, sticky="w", padx=5)
+                                 fg=FG_COLOUR2).grid(row=2, column=0, sticky="e", padx=6)
         yos = styled_combobox(row2, ["  1","  2","  3"], 3)
-        yos.grid(row=0, column=1, sticky="w", padx=5, pady=5)
+        yos.grid(row=2, column=1, sticky="w", padx=6, pady=5)
 
+        prog_options = []
+        for p in self.ui.app.programmes:
+            prog_options.append(f"{p["programme_code"]} - {p["name"]}")
+        styled_label(row2, "Programme:", bg=BG_COLOUR2, font=FONT_BODY,
+                     fg=FG_COLOUR2).grid(row=0, column=0, sticky="e", padx=6)
+        programme_drop = styled_combobox(row2, prog_options, 26)
+        programme_drop.grid(row=0, column=1, sticky="w", padx=6, pady=5)
 
+        camp_options = []
+        for p in self.ui.app.campuses:
+            camp_options.append(f"{p["name"]} - {p["campus_code"]}")
+        styled_label(row2, "Campus:", bg=BG_COLOUR2, font=FONT_BODY,
+                     fg=FG_COLOUR2).grid(row=1, column=0, sticky="e", padx=6)
+        campus_drop = styled_combobox(row2, camp_options, 26)
+        campus_drop.grid(row=1, column=1, sticky="w", padx=6, pady=5)
+
+        register_frame_btn = tk.Button(row2, text="Register >>", bg=BG_COLOUR3, fg="white", font=FONT_BUTTON, relief="flat",
+                                    borderwidth=1, width=20, command=ui.show_login)
+        register_frame_btn.grid(row=3, column=1, sticky="e", pady=(40,5))
 
 if __name__=="__main__":
     StudyBuddyUI()

@@ -10,3 +10,6 @@ class StudyBuddyApp:
         if store.required_programme_data_needed():
             # give required data (programmes)
             store.set_required_programme_data()
+
+        self.programmes = store.read_file(store.PROGRAMMES_FILE)
+        self.campuses = store.read_file(store.CAMPUS_FILE)
