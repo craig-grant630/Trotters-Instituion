@@ -13,3 +13,7 @@ class StudyBuddyApp:
 
         self.programmes = store.read_file(store.PROGRAMMES_FILE)
         self.campuses = store.read_file(store.CAMPUS_FILE)
+        self.students = store.read_file(store.STUDENTS_FILE)
+
+    def add_student(self):
+        pass
