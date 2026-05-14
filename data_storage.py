@@ -74,7 +74,6 @@ class FileHandler:
         campuses = {"PCK": Campus("PCK", "Peckham"),
                     "NYC": Campus("NYC", "New York"),
                     "PAR": Campus("PAR", "Paris")}
-
         self.save_campuses(campuses)
 
     def set_required_programme_data(self):
@@ -84,21 +83,56 @@ class FileHandler:
         uk_campuses = ["PCK"]
 
         # Modules for Programmes
-        # bent modules - BA Entrepreneurship
-        bent_modules = [Module("BENT11", "Introduction to Entrepreneurship", 1),
+        # baent modules - BA Entrepreneurship
+        baent_modules = [Module("BENT11", "Introduction to Entrepreneurship", 1),
                         Module("BENT12", "Planning for Business", 1),
                         Module("BENT13", "Financial Literacy", 1),
-                        Module("BENT21", "Market Research", 2),
+                        Module("BENT21", "Business Research", 2),
                         Module("BENT22", "Design Thinking", 2),
-                        Module("BAENT23", "Business Models", 2),
+                        Module("BENT23", "Business Models", 2),
                         Module("BENT31", "Entrepreneurship Project", 3)]
+        # bamkt modules - BA Marketing
+        bamkt_modules = [Module("BMKT11", "Marketing Principles", 1),
+                         Module("BMKT12", "Customer Behaviors", 1),
+                         Module("BMKT13", "Market Research", 1),
+                         Module("BMKT21", "Digital Marketing", 2),
+                         Module("BMKT22", "Management Methodologies", 2),
+                         Module("BMKT23", "Business Analysis", 2),
+                         Module("BMKT31", "Marketing Project", 3)]
+        # bacat modules - BA Creative Accounting
+        bacat_modules = [Module("BCAT11", "Introduction to Accounting", 1),
+                         Module("BCAT12", "Report Planning", 1),
+                         Module("BCAT12", "Business Essential", 1),
+                         Module("BCAT12", "Managing Accounting", 2),
+                         Module("BCAT12", "Financial Accounting", 2),
+                         Module("BCAT12", "Tax Fundamentals", 2),
+                         Module("BCAT12", "Accounting Project", 3),]
+        # bccs modules - BS Computing Science
+        bscs_modules = [Module("BSCS11", "Introduction to Programming", 1),
+                         Module("BSCS12", "Introduction to Software Engineering", 1),
+                         Module("BSCS13", "Problem Solving", 1),
+                         Module("BSCS21", "Database System", 2),
+                         Module("BSCS22", "Data Analysis", 2),
+                         Module("BSCS23", "Machine Learning", 2),
+                         Module("BSCS31", "Computing Project", 3)]
+        # bnaval modules - BA Naval History
+        bnaval_modules = [Module("BNAV11", "Royal Navy", 1),
+                          Module("BNAV11", "Historic Naval Ships", 1),
+                          Module("BNAV11", "Strategic Naval Decisions", 1),
+                          Module("BNAV11", "WW2 Commanding Officers", 1),
+                          Module("BNAV11", "Historical Research", 1),
+                          Module("BNAV11", "Engineering of Naval Ships", 1),
+                          Module("BNAV11", "Navy Project", 1),]
 
         programmes = {
-            "BAENT": Programme("BAENT","BA Entrepreneurship", all_campuses, bent_modules)
+            "BAENT": Programme("BAENT","BA Entrepreneurship", all_campuses, baent_modules),
+            "BAMKT": Programme("BAMKT", "BA Marketing", all_campuses, bamkt_modules),
+            "BACAT": Programme("BACAT", "BA Creative Accounting", all_campuses, bacat_modules),
+            "BSCSC": Programme("BSCSC", "BS Computing Science", all_campuses, bscs_modules),
+            "BANAV": Programme("BANAV","BA British Naval History", uk_campuses, bnaval_modules)
         }
 
         self.programme_save(programmes)
-
 
 
 
