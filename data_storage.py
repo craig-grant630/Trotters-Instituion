@@ -1,11 +1,11 @@
 import os
 import json
-from classes import Campus, Module, Programme
+from classes import Campus, Module, Programme, Student
 
 class FileHandler:
 
     CAMPUS_FILE = 'campuses.json'
-    STUDENTS_FILE = 'students.json'
+    STUDENTS_FILE = 'student.json'
     PROGRAMMES_FILE = 'programmes.json'
 #=======================================================================================================================
     # Initialise paths and set read and write methods
@@ -33,9 +33,26 @@ class FileHandler:
         filepath = self.path(filename)
         with open(filepath, 'w') as f:
             json.dump(data, f, indent=4)
+#=======================================================================================================================
+    # Students save and load
+    def save_students(self, students):
+        result = []
+        for s in students:
+            students_dict = s.to_dict()
+            result.append(students_dict)
+        return self.write_file(FileHandler.STUDENTS_FILE, result)
+
+    def load_students(self):
+        result = {}
+        # Change reading JSON file to a dictionary of objects
+        for s_dict in self.read_file(FileHandler.STUDENTS_FILE):
+            s_object = Student.from_dict(s_dict)
+            s_key = s_object.student_id
+            result[s_key] = s_object
+        return result
 
 #=======================================================================================================================
-    # Campuses save
+    # Campuses save and load
     def save_campuses(self, campuses):
         result = []
         for c in campuses.values():
@@ -44,8 +61,16 @@ class FileHandler:
             result.append(campus_dict)
         return self.write_file(FileHandler.CAMPUS_FILE, result)
 
+    def load_campuses(self):
+        result = {}
+        # Change reading JSON file to a dictionary of objects
+        for c_dict in self.read_file(FileHandler.CAMPUS_FILE):
+            c_object = Campus.from_dict(c_dict)
+            c_key = c_object.campus_code
+            result[c_key] = c_object
+        return result
 #=======================================================================================================================
-    # Programme Save and write to programme JSON file
+    # Programme Save and load
     def programme_save(self, programmes):
         result = []
         for p in programmes.values():
@@ -53,7 +78,15 @@ class FileHandler:
             programmes_dict = p.to_dict()
             result.append(programmes_dict)
         return self.write_file(FileHandler.PROGRAMMES_FILE, result)
-
+    #
+    def load_programmes(self):
+        result = {}
+        # Change reading JSON file to a dictionary of objects
+        for p_dict in self.read_file(FileHandler.PROGRAMMES_FILE):
+            p_object = Programme.from_dict(p_dict)
+            p_key = p_object.programme_code
+            result[p_key] = p_object
+        return result
 #=======================================================================================================================
     # Check if required data and starting data is required methods
     def required_campus_data_needed(self):
