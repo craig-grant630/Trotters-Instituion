@@ -78,7 +78,7 @@ class StudyBuddyUI:
         self.container = tk.Frame(self.root, bg=BG_COLOUR)
         self.container.pack(fill="both", expand=True)
 
-        self.show_login()
+        self.show_dashboard()
         self.root.mainloop()
 
     def clear(self):
@@ -93,6 +93,10 @@ class StudyBuddyUI:
         self.clear()
         RegisterFrame(self.container, self)
 
+    def show_dashboard(self):
+        self.clear()
+        Dashboard(self.container, self)
+
 # =====================================================================================
 class WelcomeHeader(tk.Frame):
     def __init__(self, parent, ui):
@@ -105,6 +109,18 @@ class WelcomeHeader(tk.Frame):
         styled_label(self, "Trotters Independent Tuition - Peckham, South East London", font=FONT_SMALL,
                      fg=FG_COLOUR2, bg=BG_COLOUR2).pack(pady=(0,10))
         separator(self).pack(fill="x", pady=10)
+
+class InternalHeader(tk.Frame):
+    def __init__(self, parent, ui, title):
+        super().__init__(parent, bg=BG_COLOUR3)
+        self.pack(fill="x")
+        self.ui = ui
+
+        tk.Label(self, text="TiT", bg=BG_COLOUR3, fg=ACCENT, font=FONT_HEADER).pack(side="left", padx=10, pady=5)
+        tk.Label(self, text=f" Study Buddy   |   {title}", bg= BG_COLOUR3,font=FONT_BUTTON, fg=FG_COLOUR).pack(side="left")
+
+        tk.Button(self, text="Logout", bg=BG_COLOUR2, fg="white", font=("Helvetica", 11, "bold"), relief="flat",
+                  borderwidth=1, width=8, command=ui.show_login).pack(side="right", padx=10)
 
 #==============================================================================================
 
@@ -160,6 +176,7 @@ class LoginFrame(tk.Frame):
         if valid:
             self.ui.user = result
             # show_dash
+            self.ui.show_dashboard()
         else:
             self.login_msg.set(result)
 
@@ -268,6 +285,16 @@ class RegisterFrame(tk.Frame):
             self.msg_label = tk.Label(self.row2, bg=BG_COLOUR2, fg="green", textvariable=self.register_msg, font=FONT_MSG,
                                       wraplength=180)
             self.msg_label.grid(row=3, column=0, sticky="sw", pady=5)
+
+class Dashboard(tk.Frame):
+    def __init__(self, parent, ui):
+        super().__init__(parent, bg=BG_COLOUR)
+        self.pack(fill="both", expand=True)
+        self.ui = ui
+
+        student = ui.user
+
+        InternalHeader(self, ui, f"Dashboard")
 
 if __name__=="__main__":
     StudyBuddyUI()
