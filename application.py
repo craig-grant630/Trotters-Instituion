@@ -49,3 +49,15 @@ class StudyBuddyApp:
         student = Student(student_id, name, programme_code, campus_code, year, password1)
         self.students[student_id] = student
         self.store.save_students(self.students)
+
+    def authenticate(self, student_id, password):
+        student = self.students.get(student_id)
+
+        if not student:
+            return False, "WARNING:  Student ID does not exist within the system."
+        if not password:
+            return False, "WARNING:  Password is empty. Please enter."
+        if student.password != password:
+            return False, "WARNING:  Password does not match."
+        else:
+            return True, student

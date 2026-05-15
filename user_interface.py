@@ -67,6 +67,7 @@ class StudyBuddyUI:
 
     def __init__(self):
         self.app = StudyBuddyApp()
+        self.user = None
 
         self.root = tk.Tk()
         self.root.title("TiT Study Buddy")
@@ -133,20 +134,34 @@ class LoginFrame(tk.Frame):
         row2 = tk.Frame(outer, bg=BG_COLOUR2)
         row2.pack(pady=5)
 
+        tk.Label(row2, bg=BG_COLOUR2, fg="red",font=FONT_MSG, textvariable=self.login_msg).grid()
+
         styled_label(row2, "Student ID (10 digits)", bg=BG_COLOUR2, font=FONT_BODY,
-                     fg=FG_COLOUR2).grid(row=0, column=0, sticky="w", padx=8, pady=8)
+                     fg=FG_COLOUR2).grid(row=1, column=0, sticky="w", padx=8, pady=8)
 
         self.login_id = tk.Entry(row2, bg=BG_COLOUR3,fg="white", relief="flat", font=FONT_BODY, width=40, highlightcolor=ACCENT, highlightthickness=1, insertbackground='white')
-        self.login_id.grid(row=1, column=0, sticky="w", padx=8)
+        self.login_id.grid(row=2, column=0, sticky="w", padx=8)
 
         styled_label(row2, "Password", bg=BG_COLOUR2, fg=FG_COLOUR2,
-                     font=FONT_BODY).grid(row=2, column=0, sticky="w", padx=8, pady=8)
+                     font=FONT_BODY).grid(row=3, column=0, sticky="w", padx=8, pady=8)
         self.login_pwd = tk.Entry(row2, bg=BG_COLOUR3, fg="white", relief="flat", font=FONT_BODY, width=40, show="*",
                                   highlightcolor=ACCENT, highlightthickness=1, insertbackground='white')
-        self.login_pwd.grid(row=3, column=0, sticky="w", padx=8)
+        self.login_pwd.grid(row=4, column=0, sticky="w", padx=8)
 
         tk.Button(outer, text="Login >>", bg=BG_COLOUR2, fg="white", font=FONT_BUTTON, relief="flat",
-                  borderwidth=1).pack(pady=15)
+                  borderwidth=1, command=self.login).pack(pady=15)
+
+    def login(self):
+        sid = self.login_id.get()
+        password = self.login_pwd.get()
+
+        valid, result = self.ui.app.authenticate(sid, password)
+
+        if valid:
+            self.ui.user = result
+            # show_dash
+        else:
+            self.login_msg.set(result)
 
 class RegisterFrame(tk.Frame):
     def __init__(self, parent, ui):
