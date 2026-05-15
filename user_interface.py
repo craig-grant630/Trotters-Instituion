@@ -9,6 +9,8 @@ from application import StudyBuddyApp
 # https://ttkbootstrap.readthedocs.io/en/version-0.5/widgets/combobox.html
 # https://tkdocs.com/tutorial/customstyles.html
 # https://stackoverflow.com/questions/68883001/how-to-make-tkinter-combobox-dark-themed
+# https://www.geeksforgeeks.org/python/python-pack-method-in-tkinter/
+# https://wiki.tcl-lang.org/page/tkinter.Listbox
 # Colours, fonts for UI
 #====================================================================================================
 BG_COLOUR = "#1a1a2e"
@@ -113,15 +115,17 @@ class WelcomeHeader(tk.Frame):
 class InternalHeader(tk.Frame):
     def __init__(self, parent, ui, title):
         super().__init__(parent, bg=BG_COLOUR3)
-        self.pack(fill="x")
+        self.pack(fill="both")
         self.ui = ui
 
-        tk.Label(self, text="TiT", bg=BG_COLOUR3, fg=ACCENT, font=FONT_HEADER).pack(side="left", padx=10, pady=5)
-        tk.Label(self, text=f" Study Buddy   |   {title}", bg= BG_COLOUR3,font=FONT_BUTTON, fg=FG_COLOUR).pack(side="left")
+        styled_label(self, text="TiT", bg=BG_COLOUR3, fg=ACCENT, font=FONT_HEADER).pack(side="left", padx=10, pady=(10,2))
+        styled_label(self, text=f" Study Buddy   |   {title}", bg= BG_COLOUR3,font=FONT_BUTTON, fg=FG_COLOUR).pack(side="left", padx=10, pady=(10,2))
 
         tk.Button(self, text="Logout", bg=BG_COLOUR2, fg="white", font=("Helvetica", 11, "bold"), relief="flat",
                   borderwidth=1, width=8, command=ui.show_login).pack(side="right", padx=10)
-
+        row = tk.Frame(parent, bg=BG_COLOUR3)
+        row.pack(fill="x")
+        separator(row, ACCENT).pack(fill="x", pady=5, padx=100)
 #==============================================================================================
 
 class LoginFrame(tk.Frame):
@@ -289,12 +293,45 @@ class RegisterFrame(tk.Frame):
 class Dashboard(tk.Frame):
     def __init__(self, parent, ui):
         super().__init__(parent, bg=BG_COLOUR)
-        self.pack(fill="both", expand=True)
+        self.pack(fill="both", expand=True, pady=(40,40), padx=20)
         self.ui = ui
-
-        student = ui.user
+        #Testing dashboard design with a student
+        student = self.ui.app.students["1000000000"] # replace with actual user (self.ui.user)
+        # Find all Information of Programme, Campus
+        programme_info = self.ui.app.programmes[student.programme_code]
+        campus_info = self.ui.app.campuses[student.campus_code]
 
         InternalHeader(self, ui, f"Dashboard")
+
+        row1 = tk.Frame(self, bg=BG_COLOUR3)
+        row1.pack(fill="x")
+
+        styled_label(row1, f"Welcome {student.name},", bg=BG_COLOUR3, font=FONT_BODY).pack(side="left",pady=10, padx=10)
+        styled_label(row1, f"{programme_info.name} | {campus_info.name} | Year {student.year_of_study}", bg=BG_COLOUR3,fg=FG_COLOUR2, font=FONT_SMALL).pack(pady=10, padx=10, side="left")
+        # ==============================================================================================================
+        row2 = tk.Frame(self, bg=BG_COLOUR)
+        row2.pack(fill="both", expand=True)
+
+        left_side_frame = card(row2, bg=BG_COLOUR2)
+        left_side_frame.pack(side="left", fill="both", expand=True)
+        right_side_frame = card(row2, bg=BG_COLOUR2)
+        right_side_frame.pack(side="right", fill="both", expand=True)
+
+        styled_label(right_side_frame, "My Match Requests", font=FONT_BUTTON, fg=ACCENT).pack(anchor="w")
+        separator(right_side_frame).pack(fill="x", pady=8, padx=10)
+
+        listbox = tk.Listbox(right_side_frame, bg=BG_COLOUR2, bd=0, highlightthickness=0, fg=FG_COLOUR2, font=FONT_BODY,
+                             selectbackground=ACCENT, height=2, activestyle="none")
+        listbox.pack(side="left", fill="both", expand=True)
+
+        #TESTING=============================================
+        match_requests = []
+        for students in self.ui.app.students.values():
+            match_requests.append(students.name)
+        listbox.delete(0, tk.END)
+        for request in match_requests:
+            listbox.insert(tk.END, request)
+        #=================================================
 
 if __name__=="__main__":
     StudyBuddyUI()
