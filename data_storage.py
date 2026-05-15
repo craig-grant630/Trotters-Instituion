@@ -1,3 +1,4 @@
+# https://medium.com/@idelossantosruiz/mastering-json-in-python-oop-a-practical-guide-65b39e868c33
 import os
 import json
 from classes import Campus, Module, Programme, Student
@@ -37,7 +38,7 @@ class FileHandler:
     # Students save and load
     def save_students(self, students):
         result = []
-        for s in students:
+        for s in students.values():
             students_dict = s.to_dict()
             result.append(students_dict)
         return self.write_file(FileHandler.STUDENTS_FILE, result)
