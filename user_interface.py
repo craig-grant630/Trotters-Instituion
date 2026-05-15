@@ -113,6 +113,7 @@ class LoginFrame(tk.Frame):
         super().__init__(parent, bg=BG_COLOUR)
         self.pack(fill="both", expand=True)
         self.ui = ui
+        self.login_msg = tk.StringVar()
 
         outer = tk.Frame(self, bg=BG_COLOUR2,padx=40, pady=36)
         outer.place(relx=0.5, rely=0.5, anchor="center")
@@ -192,36 +193,36 @@ class RegisterFrame(tk.Frame):
             entry.grid(row=0, column=1, sticky="w", padx=8)
 
         separator(outer).pack(fill="x", pady=10)
-        row2 = tk.Frame(outer, bg=BG_COLOUR2)
-        row2.pack(fill="x")
-        row2.grid_columnconfigure(0, minsize=180, uniform="reg_col")
+        self.row2 = tk.Frame(outer, bg=BG_COLOUR2)
+        self.row2.pack(fill="x")
+        self.row2.grid_columnconfigure(0, minsize=180, uniform="reg_col")
 
-        styled_label(row2, "Year of Study:", bg=BG_COLOUR2, font=FONT_BODY,
+        styled_label(self.row2, "Year of Study:", bg=BG_COLOUR2, font=FONT_BODY,
                                  fg=FG_COLOUR2).grid(row=2, column=0, sticky="e", padx=6)
-        self.yos = styled_combobox(row2, ["  1","  2","  3"], 3)
+        self.yos = styled_combobox(self.row2, ["  1","  2","  3"], 3)
         self.yos.grid(row=2, column=1, sticky="w", padx=6, pady=5)
 
         prog_options = []
         for p in self.ui.app.programmes.values():
             prog_options.append(f"{p.programme_code} - {p.name}")
-        styled_label(row2, "Programme:", bg=BG_COLOUR2, font=FONT_BODY,
+        styled_label(self.row2, "Programme:", bg=BG_COLOUR2, font=FONT_BODY,
                      fg=FG_COLOUR2).grid(row=0, column=0, sticky="e", padx=6)
-        self.programme_drop = styled_combobox(row2, prog_options, 26)
+        self.programme_drop = styled_combobox(self.row2, prog_options, 26)
         self.programme_drop.grid(row=0, column=1, sticky="w", padx=6, pady=5)
 
         camp_options = []
         for c in self.ui.app.campuses.values():
             camp_options.append(f"{c.name} - {c.campus_code}")
-        styled_label(row2, "Campus:", bg=BG_COLOUR2, font=FONT_BODY,
+        styled_label(self.row2, "Campus:", bg=BG_COLOUR2, font=FONT_BODY,
                      fg=FG_COLOUR2).grid(row=1, column=0, sticky="e", padx=6)
-        self.campus_drop = styled_combobox(row2, camp_options, 26)
+        self.campus_drop = styled_combobox(self.row2, camp_options, 26)
         self.campus_drop.grid(row=1, column=1, sticky="w", padx=6, pady=5)
 
-        register_frame_btn = tk.Button(row2, text="Register >>", bg=BG_COLOUR3, fg="white", font=FONT_BUTTON, relief="flat",
+        register_frame_btn = tk.Button(self.row2, text="Register >>", bg=BG_COLOUR3, fg="white", font=FONT_BUTTON, relief="flat",
                                     borderwidth=1, width=15, command=self.register_student)
         register_frame_btn.grid(row=3, column=1, sticky="e", pady=(40,5), padx = 10)
 
-        self.msg_label = tk.Label(row2, bg=BG_COLOUR2, fg="red", textvariable=self.register_msg, font=FONT_MSG, wraplength=180)
+        self.msg_label = tk.Label(self.row2, bg=BG_COLOUR2, fg="red", textvariable=self.register_msg, font=FONT_MSG, wraplength=180)
         self.msg_label.grid(row=3, column=0, sticky="sw", pady=5)
 
     def register_student(self):
@@ -243,9 +244,15 @@ class RegisterFrame(tk.Frame):
 
         if not valid:
             self.register_msg.set(msg)
+            self.msg_label = tk.Label(self.row2, bg=BG_COLOUR2, fg="red", textvariable=self.register_msg, font=FONT_MSG,
+                                      wraplength=180)
+            self.msg_label.grid(row=3, column=0, sticky="sw", pady=5)
         else:
             self.ui.app.add_student(sid, name, password, camp_code, prog_code, year)
-            self.ui.show_login()
+            self.register_msg.set("Student Registered Successfully: You are welcome to Log in")
+            self.msg_label = tk.Label(self.row2, bg=BG_COLOUR2, fg="green", textvariable=self.register_msg, font=FONT_MSG,
+                                      wraplength=180)
+            self.msg_label.grid(row=3, column=0, sticky="sw", pady=5)
 
 if __name__=="__main__":
     StudyBuddyUI()
