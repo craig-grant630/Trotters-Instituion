@@ -19,6 +19,7 @@ BORDER = "#0f3460"
 ENTRY_BG="#0d2137"
 FG_COLOUR = "#eaeaea"
 FG_COLOUR2 = "#a0a0b0"
+MSG_BG_COLOUR = BG_COLOUR2
 
 ACCENT = "#e94560"
 
@@ -26,6 +27,7 @@ FONT_BODY = ("Helvetica", 12)
 FONT_HEADER = ("Helvetica", 20, "bold")
 FONT_SMALL = ("Helvetica", 10)
 FONT_BUTTON= ("Helvetica", 12, "bold")
+FONT_MSG = ("helvetica", 9)
 #=================================================================================================================
 #Stlyed Widgets
 
@@ -103,7 +105,6 @@ class WelcomeHeader(tk.Frame):
                      fg=FG_COLOUR2, bg=BG_COLOUR2).pack(pady=(0,10))
         separator(self).pack(fill="x", pady=10)
 
-
 #==============================================================================================
 
 class LoginFrame(tk.Frame):
@@ -151,6 +152,7 @@ class RegisterFrame(tk.Frame):
         super().__init__(parent, bg=BG_COLOUR)
         self.pack(fill="both", expand=True)
         self.ui = ui
+        self.register_msg = tk.StringVar()
 
         outer = tk.Frame(self, bg=BG_COLOUR2, padx=40, pady=20)
         outer.place(relx=0.5, rely=0.5, anchor="center")
@@ -200,31 +202,50 @@ class RegisterFrame(tk.Frame):
         self.yos.grid(row=2, column=1, sticky="w", padx=6, pady=5)
 
         prog_options = []
-        for p in self.ui.app.programmes:
-            prog_options.append(f"{p["programme_code"]} - {p["name"]}")
+        for p in self.ui.app.programmes.values():
+            prog_options.append(f"{p.programme_code} - {p.name}")
         styled_label(row2, "Programme:", bg=BG_COLOUR2, font=FONT_BODY,
                      fg=FG_COLOUR2).grid(row=0, column=0, sticky="e", padx=6)
         self.programme_drop = styled_combobox(row2, prog_options, 26)
         self.programme_drop.grid(row=0, column=1, sticky="w", padx=6, pady=5)
 
         camp_options = []
-        for p in self.ui.app.campuses:
-            camp_options.append(f"{p["name"]} - {p["campus_code"]}")
+        for c in self.ui.app.campuses.values():
+            camp_options.append(f"{c.name} - {c.campus_code}")
         styled_label(row2, "Campus:", bg=BG_COLOUR2, font=FONT_BODY,
                      fg=FG_COLOUR2).grid(row=1, column=0, sticky="e", padx=6)
         self.campus_drop = styled_combobox(row2, camp_options, 26)
         self.campus_drop.grid(row=1, column=1, sticky="w", padx=6, pady=5)
 
         register_frame_btn = tk.Button(row2, text="Register >>", bg=BG_COLOUR3, fg="white", font=FONT_BUTTON, relief="flat",
-                                    borderwidth=1, width=15, command=ui.show_login)
+                                    borderwidth=1, width=15, command=self.register_student)
         register_frame_btn.grid(row=3, column=1, sticky="e", pady=(40,5), padx = 10)
 
-    def register(self):
+        self.msg_label = tk.Label(row2, bg=BG_COLOUR2, fg="red", textvariable=self.register_msg, font=FONT_MSG, wraplength=180)
+        self.msg_label.grid(row=3, column=0, sticky="sw", pady=5)
+
+    def register_student(self):
         sid = self.entries["Student ID (10 digits)"].get()
         name = self.entries["Full Name"].get()
         password = self.entries["Password"].get()
         con_password = self.entries["Confirm Password"].get()
-        pass
+        prog_sel = self.programme_drop.get()
+        camp_sel = self.campus_drop.get()
+        try:
+            prog_code = prog_sel.split("-")[0].strip()
+            camp_code = camp_sel.split("-")[1].strip()
+        except IndexError:
+            prog_code= None
+            camp_code = None
+        year = self.yos.get().strip()
+
+        valid, msg = self.ui.app.check_register_credentials(sid, password, con_password, camp_code, prog_code,year, name)
+
+        if not valid:
+            self.register_msg.set(msg)
+        else:
+            self.ui.app.add_student(sid, name, password, camp_code, prog_code, year)
+            self.ui.show_login()
 
 if __name__=="__main__":
     StudyBuddyUI()
