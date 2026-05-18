@@ -1,0 +1,14 @@
+[
+    {
+        "campus_code": "PCK",
+        "name": "Peckham"
+    },
+    {
+        "campus_code": "NYC",
+        "name": "New York"
+    },
+    {
+        "campus_code": "PAR",
+        "name": "Paris"
+    }
+]
