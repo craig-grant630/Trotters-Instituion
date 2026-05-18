@@ -11,6 +11,7 @@ from application import StudyBuddyApp
 # https://stackoverflow.com/questions/68883001/how-to-make-tkinter-combobox-dark-themed
 # https://www.geeksforgeeks.org/python/python-pack-method-in-tkinter/
 # https://wiki.tcl-lang.org/page/tkinter.Listbox
+# https://www.geeksforgeeks.org/python/binding-function-with-double-click-with-tkinter-listbox/
 # Colours, fonts for UI
 #====================================================================================================
 BG_COLOUR = "#1a1a2e"
@@ -63,8 +64,25 @@ def styled_combobox(parent, options, width, **kwargs):
 
 def separator(parent, bg=BORDER):
     return tk.Frame(parent, bg=bg, height=1)
-#============================================================================================================
 
+def styled_treeview(parent):
+    style = ttk.Style()
+    style.theme_use('clam')
+
+    style.configure("Dark.Treeview",background=BG_COLOUR2,foreground=FG_COLOUR2,fieldbackground=BG_COLOUR2,
+        rowheight=27,font=FONT_SMALL, borderwidth=0)
+    style.map("Dark.Treeview",background=[('selected', ACCENT)])
+
+    style.configure("Dark.Treeview.Heading",background=BG_COLOUR3,foreground="white",
+                    font=FONT_BODY,rowheight=35,borderwidth=0,relief="flat")
+    style.map("Dark.Treeview.Heading",background=[('active', BG_COLOUR3)],foreground=[('active', ACCENT)])
+
+    tree = ttk.Treeview(parent, columns=("Salary", "Bonus"), style="Dark.Treeview")
+    return tree
+
+#============================================================================================================
+# Initial setup of root container - configure title and size of window, instantiate Studdy Buddy App and set user
+# Contains methods for clearing and switching frame logic
 class StudyBuddyUI:
 
     def __init__(self):
@@ -100,6 +118,7 @@ class StudyBuddyUI:
         Dashboard(self.container, self)
 
 # =====================================================================================
+# Header frames used withing main farmes of application
 class WelcomeHeader(tk.Frame):
     def __init__(self, parent, ui):
         #create instance of the login frame:
@@ -118,16 +137,16 @@ class InternalHeader(tk.Frame):
         self.pack(fill="both")
         self.ui = ui
 
-        styled_label(self, text="TiT", bg=BG_COLOUR3, fg=ACCENT, font=FONT_HEADER).pack(side="left", padx=10, pady=(10,2))
+        tk.Button(self, text="TiT", bg=BG_COLOUR3, fg=ACCENT, font=FONT_HEADER, command=self.ui.show_dashboard, relief="flat", activebackground=BG_COLOUR3, cursor="fleur").pack(side="left", padx=10)
         styled_label(self, text=f" Study Buddy   |   {title}", bg= BG_COLOUR3,font=FONT_BUTTON, fg=FG_COLOUR).pack(side="left", padx=10, pady=(10,2))
 
         tk.Button(self, text="Logout", bg=BG_COLOUR2, fg="white", font=("Helvetica", 11, "bold"), relief="flat",
                   borderwidth=1, width=8, command=ui.show_login).pack(side="right", padx=10)
         row = tk.Frame(parent, bg=BG_COLOUR3)
         row.pack(fill="x")
-        separator(row, ACCENT).pack(fill="x", pady=5, padx=100)
+        separator(row, ACCENT).pack(fill="x", pady=2, padx=100)
 #==============================================================================================
-
+# Main frames of application
 class LoginFrame(tk.Frame):
     def __init__(self, parent, ui):
         # create instance of the login frame:
@@ -300,7 +319,8 @@ class Dashboard(tk.Frame):
         # Find all Information of Programme, Campus
         programme_info = self.ui.app.programmes[student.programme_code]
         campus_info = self.ui.app.campuses[student.campus_code]
-
+        #===============================================================================================================
+        #HEADER
         InternalHeader(self, ui, f"Dashboard")
 
         row1 = tk.Frame(self, bg=BG_COLOUR3)
@@ -309,29 +329,36 @@ class Dashboard(tk.Frame):
         styled_label(row1, f"Welcome {student.name},", bg=BG_COLOUR3, font=FONT_BODY).pack(side="left",pady=10, padx=10)
         styled_label(row1, f"{programme_info.name} | {campus_info.name} | Year {student.year_of_study}", bg=BG_COLOUR3,fg=FG_COLOUR2, font=FONT_SMALL).pack(pady=10, padx=10, side="left")
         # ==============================================================================================================
+        # LEFT SIDE - action buttons
         row2 = tk.Frame(self, bg=BG_COLOUR)
         row2.pack(fill="both", expand=True)
 
         left_side_frame = card(row2, bg=BG_COLOUR2)
         left_side_frame.pack(side="left", fill="both", expand=True)
+
+        styled_label(left_side_frame, "Actions", font=FONT_BUTTON, fg=ACCENT).pack(anchor="w")
+        separator(left_side_frame).pack(fill="x", pady=8, padx=10)
+        add_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR,relief="flat", text="Add Request",
+                               font=("Helvetica", 10, "bold"))
+        add_button.pack(fill="x", ipady=5, pady=3)
+        edit_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR, relief="flat", text="Edit Request",
+                               font=("Helvetica", 10, "bold"))
+        edit_button.pack(fill="x", ipady=5, pady=3)
+        delete_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR, relief="flat", text="Delete Request",
+                               font=("Helvetica", 10, "bold"))
+        delete_button.pack(fill="x", ipady=5, pady=3)
+        matches_button = tk.Button(left_side_frame, bg=ACCENT, fg=FG_COLOUR, relief="flat", text="Find Matches",
+                                  font=("Helvetica", 10, "bold"))
+        matches_button.pack(fill="x",side="bottom", ipady=5, pady=3)
+        #===============================================================================================================
         right_side_frame = card(row2, bg=BG_COLOUR2)
-        right_side_frame.pack(side="right", fill="both", expand=True)
+        right_side_frame.pack(side="left", fill="both", expand=True)
 
         styled_label(right_side_frame, "My Match Requests", font=FONT_BUTTON, fg=ACCENT).pack(anchor="w")
         separator(right_side_frame).pack(fill="x", pady=8, padx=10)
 
-        listbox = tk.Listbox(right_side_frame, bg=BG_COLOUR2, bd=0, highlightthickness=0, fg=FG_COLOUR2, font=FONT_BODY,
-                             selectbackground=ACCENT, height=2, activestyle="none")
+        listbox = styled_treeview(right_side_frame)
         listbox.pack(side="left", fill="both", expand=True)
-
-        #TESTING=============================================
-        match_requests = []
-        for students in self.ui.app.students.values():
-            match_requests.append(students.name)
-        listbox.delete(0, tk.END)
-        for request in match_requests:
-            listbox.insert(tk.END, request)
-        #=================================================
 
 if __name__=="__main__":
     StudyBuddyUI()
