@@ -15,6 +15,7 @@ class StudyBuddyApp:
         self.programmes = self.store.load_programmes()
         self.campuses = self.store.load_campuses()
         self.students = self.store.load_students()
+        self.requests = self.store.load_requests()
 
 # Register validations
     #=========================================================================================================
@@ -61,3 +62,10 @@ class StudyBuddyApp:
             return False, "WARNING:  Password does not match."
         else:
             return True, student
+
+    def get_requests_for_student(self, student_id):
+        result=[]
+        for request in self.requests.values():
+            if request.student_id == student_id:
+                result.append(request)
+        return result

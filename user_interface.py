@@ -11,7 +11,7 @@ from application import StudyBuddyApp
 # https://stackoverflow.com/questions/68883001/how-to-make-tkinter-combobox-dark-themed
 # https://www.geeksforgeeks.org/python/python-pack-method-in-tkinter/
 # https://wiki.tcl-lang.org/page/tkinter.Listbox
-# https://www.geeksforgeeks.org/python/binding-function-with-double-click-with-tkinter-listbox/
+# https://www.pythontutorial.net/tkinter/tkinter-treeview/
 # Colours, fonts for UI
 #====================================================================================================
 BG_COLOUR = "#1a1a2e"
@@ -65,7 +65,7 @@ def styled_combobox(parent, options, width, **kwargs):
 def separator(parent, bg=BORDER):
     return tk.Frame(parent, bg=bg, height=1)
 
-def styled_treeview(parent):
+def styled_dashboard_treeview(parent):
     style = ttk.Style()
     style.theme_use('clam')
 
@@ -74,10 +74,21 @@ def styled_treeview(parent):
     style.map("Dark.Treeview",background=[('selected', ACCENT)])
 
     style.configure("Dark.Treeview.Heading",background=BG_COLOUR3,foreground="white",
-                    font=FONT_BODY,rowheight=35,borderwidth=0,relief="flat")
+                    font=("Helvetica",10, "bold"),rowheight=35,borderwidth=0,relief="flat")
     style.map("Dark.Treeview.Heading",background=[('active', BG_COLOUR3)],foreground=[('active', ACCENT)])
+    tree = ttk.Treeview(parent, columns=("module","campus","year","available"), style="Dark.Treeview")
+    tree.heading("#0", text="ID")
+    tree.heading("module", text="Module Code")
+    tree.heading("campus", text="Campus Code")
+    tree.heading("year", text="Year")
+    tree.heading("available", text="# Availabilities")
 
-    tree = ttk.Treeview(parent, columns="id", style="Dark.Treeview")
+    tree.column("#0", width=40, anchor="center")
+    tree.column("module", width=120, anchor="center")
+    tree.column("campus", width=120, anchor="center")
+    tree.column("year", width=90, anchor="center")
+    tree.column("available", width=90, anchor="center")
+    tree.pack(fill="both", expand=True)
     return tree
 
 #============================================================================================================
@@ -91,14 +102,14 @@ class StudyBuddyUI:
 
         self.root = tk.Tk()
         self.root.title("TiT Study Buddy")
-        self.root.geometry("700x700")
+        self.root.geometry("800x700")
         self.root.configure(bg=BG_COLOUR)
         self.root.resizable(width=True, height=True)
 
         self.container = tk.Frame(self.root, bg=BG_COLOUR)
         self.container.pack(fill="both", expand=True)
 
-        self.show_dashboard()
+        self.show_login()
         self.root.mainloop()
 
     def clear(self):
@@ -118,7 +129,7 @@ class StudyBuddyUI:
         Dashboard(self.container, self)
 
 # =====================================================================================
-# Header frames used withing main farmes of application
+# Header frames used withing main frames of application
 class WelcomeHeader(tk.Frame):
     def __init__(self, parent, ui):
         #create instance of the login frame:
@@ -314,11 +325,12 @@ class Dashboard(tk.Frame):
         super().__init__(parent, bg=BG_COLOUR)
         self.pack(fill="both", expand=True, pady=(40,40), padx=20)
         self.ui = ui
-        #Testing dashboard design with a student
-        student = self.ui.app.students["1000000000"] # replace with actual user (self.ui.user)
-        # Find all Information of Programme, Campus
+
+        student = self.ui.user
+        # Find all Information of Programme, Campus, Requests for user
         programme_info = self.ui.app.programmes[student.programme_code]
         campus_info = self.ui.app.campuses[student.campus_code]
+        self.requests = self.ui.app.get_requests_for_student(student.student_id)
         #===============================================================================================================
         #HEADER
         InternalHeader(self, ui, f"Dashboard")
@@ -337,28 +349,39 @@ class Dashboard(tk.Frame):
         left_side_frame.pack(side="left", fill="both", expand=True)
 
         styled_label(left_side_frame, "Actions", font=FONT_BUTTON, fg=ACCENT).pack(anchor="w")
-        separator(left_side_frame).pack(fill="x", pady=8, padx=10)
+        separator(left_side_frame, bg=ACCENT).pack(fill="x", pady=8, padx=10)
         add_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR,relief="flat", text="Add Request",
-                               font=("Helvetica", 10, "bold"))
-        add_button.pack(fill="x", ipady=5, pady=3)
+                               font=("Helvetica", 10, "bold"), width=15)
+        add_button.pack(pady=3)
         edit_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR, relief="flat", text="Edit Request",
-                               font=("Helvetica", 10, "bold"))
-        edit_button.pack(fill="x", ipady=5, pady=3)
+                               font=("Helvetica", 10, "bold"), width=15)
+        edit_button.pack(pady=3)
         delete_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR, relief="flat", text="Delete Request",
-                               font=("Helvetica", 10, "bold"))
-        delete_button.pack(fill="x", ipady=5, pady=3)
+                               font=("Helvetica", 10, "bold"), width=15)
+        delete_button.pack(pady=3)
         matches_button = tk.Button(left_side_frame, bg=ACCENT, fg=FG_COLOUR, relief="flat", text="Find Matches",
-                                  font=("Helvetica", 10, "bold"))
-        matches_button.pack(fill="x",side="bottom", ipady=5, pady=3)
+                                  font=("Helvetica", 10, "bold"), width=15)
+        matches_button.pack(side="bottom")
         #===============================================================================================================
         right_side_frame = card(row2, bg=BG_COLOUR2)
         right_side_frame.pack(side="left", fill="both", expand=True)
 
         styled_label(right_side_frame, "My Match Requests", font=FONT_BUTTON, fg=ACCENT).pack(anchor="w")
-        separator(right_side_frame).pack(fill="x", pady=8, padx=10)
+        separator(right_side_frame, bg=ACCENT).pack(fill="x", pady=8, padx=10)
 
-        treeview = styled_treeview(right_side_frame)
-        treeview.pack(side="left", fill="both", expand=True)
+        self.treeview = styled_dashboard_treeview(right_side_frame)
+        self.refresh_dashboard_treeview()
+
+    def refresh_dashboard_treeview(self):
+        for item in self.treeview.get_children():
+            self.treeview.delete(item)
+        if not self.requests:
+            self.treeview.insert("","end",iid="none", values=("No requests yet", "","","",""))
+        for item in self.requests:
+            self.treeview.insert("","end",iid=str(item.request_id),text=f"{item.request_id}",
+                                 values=(f"{item.module_code}",item.campus_code, f"Year {item.year}",
+                                         len(item.availability)))
+
 
 if __name__=="__main__":
     StudyBuddyUI()
