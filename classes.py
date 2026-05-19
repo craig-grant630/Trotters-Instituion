@@ -92,3 +92,43 @@ class Programme:
 
     def __repr__(self):
         return f"Programme: ({self.programme_code}, {self.name})"
+#=======================================================================================================================
+#REQUESTS
+VALID_DAYS= ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+VALID_PERIODS = ["Morning", "Afternoon", "Evening"]
+
+class Requests:
+    def __init__(self, request_id, student_id,campus_code, programme_code,year, module_code,availability=None):
+        self.request_id = request_id
+        self.student_id = student_id
+        self.campus_code = campus_code.upper()
+        self.programme_code = programme_code.upper()
+        self.year = year
+        self.module_code = module_code.upper()
+        if availability is not None:
+            self.availability = availability
+        else:
+            self.availability = []
+
+    def add_availability(self, day, period):
+        if day not in VALID_DAYS or period not in VALID_PERIODS:
+            return False
+        timeslot = {"day": day, "period": period}
+        if timeslot in self.availability:
+            return False
+        self.availability.append(timeslot)
+        return True
+
+    def remove_availability(self, day, period):
+        timeslot = {"day": day, "period": period}
+        if timeslot in self.availability:
+            self.availability.remove(timeslot)
+            return True
+        return False
+
+    def to_dict(self):
+        return self.__dict__
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["request_id"], data["student_id"], data["campus_code"], data["programme_code"], data["year"], data["module_code"], data.get("availability",[]))
