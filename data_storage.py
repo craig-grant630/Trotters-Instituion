@@ -1,7 +1,7 @@
 # https://medium.com/@idelossantosruiz/mastering-json-in-python-oop-a-practical-guide-65b39e868c33
 import os
 import json
-from classes import Campus, Module, Programme, Student
+from classes import Campus, Module, Programme, Student, Requests
 
 class FileHandler:
 
@@ -103,8 +103,8 @@ class FileHandler:
         result = {}
         # Change reading JSON file to a dictionary of objects
         for r_dict in self.read_file(FileHandler.REQUESTS_FILE):
-            r_object = Programme.from_dict(r_dict)
-            r_key = r_object.programme_code
+            r_object = Requests.from_dict(r_dict)
+            r_key = r_object.request_id
             result[r_key] = r_object
         return result
 
@@ -188,5 +188,8 @@ class FileHandler:
 
         self.programme_save(programmes)
 
+    def set_sample_requests(self):
 
+        requests = {"1":Requests("1", "1000000000","PCK","BAENT",2,"bent11",{"day" : "Monday", "period":"Afternoon"})}
 
+        self.requests_save(requests)
