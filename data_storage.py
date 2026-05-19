@@ -8,6 +8,7 @@ class FileHandler:
     CAMPUS_FILE = 'campuses.json'
     STUDENTS_FILE = 'student.json'
     PROGRAMMES_FILE = 'programmes.json'
+    REQUESTS_FILE = 'requests.json'
 #=======================================================================================================================
     # Initialise paths and set read and write methods
     def __init__(self, data_dir="data"):
@@ -88,6 +89,25 @@ class FileHandler:
             p_key = p_object.programme_code
             result[p_key] = p_object
         return result
+#=======================================================================================================================
+    #Requests save and load
+    def requests_save(self, requests):
+        result = []
+        for r in requests.values():
+            # Use method from requests class to change into a dictionary
+            requests_dict = r.to_dict()
+            result.append(requests_dict)
+        return self.write_file(FileHandler.REQUESTS_FILE, result)
+
+    def load_requests(self):
+        result = {}
+        # Change reading JSON file to a dictionary of objects
+        for r_dict in self.read_file(FileHandler.REQUESTS_FILE):
+            r_object = Programme.from_dict(r_dict)
+            r_key = r_object.programme_code
+            result[r_key] = r_object
+        return result
+
 #=======================================================================================================================
     # Check if required data and starting data is required methods
     def required_campus_data_needed(self):
