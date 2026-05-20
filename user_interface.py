@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from application import StudyBuddyApp
 
 # Styling references
@@ -329,7 +329,7 @@ class Dashboard(tk.Frame):
         student = self.ui.user
         # Find all Information of Programme, Campus, Requests for user
         programme_info = self.ui.app.programmes[student.programme_code]
-        campus_info = self.ui.app.campuses[student.campus_code]
+        self.campus_info = self.ui.app.campuses[student.campus_code]
         self.requests = self.ui.app.get_requests_for_student(student.student_id)
         #===============================================================================================================
         #HEADER
@@ -339,7 +339,7 @@ class Dashboard(tk.Frame):
         row1.pack(fill="x")
 
         styled_label(row1, f"Welcome {student.name},", bg=BG_COLOUR3, font=FONT_BODY).pack(side="left",pady=10, padx=10)
-        styled_label(row1, f"{programme_info.name} | {campus_info.name} | Year {student.year_of_study}", bg=BG_COLOUR3,fg=FG_COLOUR2, font=FONT_SMALL).pack(pady=10, padx=10, side="left")
+        styled_label(row1, f"{programme_info.name} | {self.campus_info.name} | Year {student.year_of_study}", bg=BG_COLOUR3,fg=FG_COLOUR2, font=FONT_SMALL).pack(pady=10, padx=10, side="left")
         # ==============================================================================================================
         # LEFT SIDE - action buttons
         row2 = tk.Frame(self, bg=BG_COLOUR)
@@ -351,7 +351,7 @@ class Dashboard(tk.Frame):
         styled_label(left_side_frame, "Actions", font=FONT_BUTTON, fg=ACCENT).pack(anchor="w")
         separator(left_side_frame, bg=ACCENT).pack(fill="x", pady=8, padx=10)
         add_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR,relief="flat", text="Add Request",
-                               font=("Helvetica", 10, "bold"), width=15)
+                               font=("Helvetica", 10, "bold"), width=15, command=self.new_request)
         add_button.pack(pady=3)
         edit_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR, relief="flat", text="Edit Request",
                                font=("Helvetica", 10, "bold"), width=15)
@@ -382,6 +382,18 @@ class Dashboard(tk.Frame):
                                  values=(f"{item.module_code}",item.campus_code, f"Year {item.year}",
                                          len(item.availability)))
 
+    def selection_treeview(self):
+        selection = self.treeview.selection()
+        print(selection)
+        if not selection or selection[0] == "none":
+            return None
+        request_id = int(selection[0])
+        return self.ui.app.get_request_by_id(request_id)
+
+    def new_request(self):
+        r_obj = self.selection_treeview()
+        if not r_obj:
+            messagebox.showwarning("Warning", "No requests selected")
 
 if __name__=="__main__":
     StudyBuddyUI()

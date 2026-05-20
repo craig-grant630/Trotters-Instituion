@@ -17,7 +17,7 @@ class StudyBuddyApp:
         self.students = self.store.load_students()
         self.requests = self.store.load_requests()
 
-# Register validations
+# Register validations and login authentication
     #=========================================================================================================
     def check_register_credentials(self, student_id, password1, password2, campus_code, programme_code, year, name):
         if student_id in self.students:
@@ -63,9 +63,17 @@ class StudyBuddyApp:
         else:
             return True, student
 
+# Request lookups by student ID and request ID
+#=======================================================================================================================
     def get_requests_for_student(self, student_id):
         result=[]
         for request in self.requests.values():
             if request.student_id == student_id:
                 result.append(request)
         return result
+
+    def get_request_by_id(self, request_id):
+        for request in self.requests.values():
+            if request.request_id == request_id:
+                return request
+        return None
