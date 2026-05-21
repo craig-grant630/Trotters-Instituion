@@ -128,6 +128,10 @@ class StudyBuddyUI:
         self.clear()
         Dashboard(self.container, self)
 
+    def show_request_form(self, request=None):
+        self.clear()
+        AddEditRequest(self.container, self, request)
+
 # =====================================================================================
 # Header frames used withing main frames of application
 class WelcomeHeader(tk.Frame):
@@ -284,7 +288,7 @@ class RegisterFrame(tk.Frame):
         self.campus_drop = styled_combobox(self.row2, camp_options, 26)
         self.campus_drop.grid(row=1, column=1, sticky="w", padx=6, pady=5)
 
-        register_frame_btn = tk.Button(self.row2, text="Register >>", bg=BG_COLOUR3, fg="white", font=FONT_BUTTON, relief="flat",
+        register_frame_btn = tk.Button(self.row2, text="Create Account", bg=BG_COLOUR3, fg="white", font=FONT_BUTTON, relief="flat",
                                     borderwidth=1, width=15, command=self.register_student)
         register_frame_btn.grid(row=3, column=1, sticky="e", pady=(40,5), padx = 10)
 
@@ -354,7 +358,7 @@ class Dashboard(tk.Frame):
                                font=("Helvetica", 10, "bold"), width=15, command=self.new_request)
         add_button.pack(pady=3)
         edit_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR, relief="flat", text="Edit Request",
-                               font=("Helvetica", 10, "bold"), width=15)
+                               font=("Helvetica", 10, "bold"), width=15, command=self.edit_request)
         edit_button.pack(pady=3)
         delete_button = tk.Button(left_side_frame, bg=BG_COLOUR3, fg=FG_COLOUR, relief="flat", text="Delete Request",
                                font=("Helvetica", 10, "bold"), width=15)
@@ -384,16 +388,43 @@ class Dashboard(tk.Frame):
 
     def selection_treeview(self):
         selection = self.treeview.selection()
-        print(selection)
         if not selection or selection[0] == "none":
             return None
         request_id = int(selection[0])
         return self.ui.app.get_request_by_id(request_id)
 
     def new_request(self):
+        self.ui.show_request_form()
+
+    def edit_request(self):
         r_obj = self.selection_treeview()
         if not r_obj:
             messagebox.showwarning("Warning", "No requests selected")
+            return
+        self.ui.show_request_form(r_obj)
+
+    def delete_request(self):
+        pass
+
+    def find_matches(self):
+        pass
+
+class AddEditRequest(tk.Frame):
+    def __init__(self, parent, ui, request=None):
+        super().__init__(parent, bg=BG_COLOUR)
+        self.pack(fill="both", expand=True, pady=(40, 40), padx=20)
+        self.ui = ui
+        if request is not None:
+            self.request = request
+            mode = "Edit Request"
+        else:
+            mode = "Add Request"
+
+        # HEADER
+        InternalHeader(self, ui, f"{mode}")
+
+        row1 = tk.Frame(self, bg=BG_COLOUR3)
+        row1.pack(fill="both", pady=(0,5))
 
 if __name__=="__main__":
     StudyBuddyUI()
